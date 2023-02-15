@@ -49,6 +49,35 @@ void callGetNetworkParams2()
 		cout << "Two-step GetNetworkParams() failed with error code " << result << endl;
 }
 
+int cygwin_gethostname(char* name, size_t len)
+{
+	PFIXED_INFO info = NULL;
+	ULONG size = 0;
+
+	if (GetNetworkParams(info, &size) == ERROR_BUFFER_OVERFLOW
+		&& (info = (PFIXED_INFO)alloca(size))
+		&& GetNetworkParams(info, &size) == ERROR_SUCCESS)
+	{
+		strncpy(name, info->HostName, len);
+		return 0;
+	}
+
+	return -1;
+}
+
+void call_cygwin_gethostname()
+{
+	const int NI_MAXHOST = 1025;
+	char buf[NI_MAXHOST + 1];
+	memset(buf, 0, sizeof buf);
+	auto result = cygwin_gethostname(buf, sizeof buf - 1);
+
+	if (result == 0)
+		cout << "cygwin_gethostname() succeeded. Result : " << buf << endl;
+	else
+		cout << "cygwin_gethostname() failed with error code " << result << endl;
+}
+
 int main()
 {
 	cout << "Testing GetComputerNameEx()" << endl;
@@ -59,6 +88,9 @@ int main()
 
 	cout << "Testing 2-step GetNetworkParams()" << endl;
 	callGetNetworkParams2();
+
+	cout << "Testing cygwin_gethostname()" << endl;
+	call_cygwin_gethostname();
 	
 	return 0;
 }
