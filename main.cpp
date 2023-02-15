@@ -78,6 +78,24 @@ void call_cygwin_gethostname()
 		cout << "cygwin_gethostname() failed with error code " << result << endl;
 }
 
+void call_git_hostname()
+{
+	auto result = system("\"c:\\Program Files\\Git\\usr\\bin\\hostname.exe\"");
+	if (result == 0)
+		cout << "Calling git hostname succeeded." << endl;
+	else
+		cout << "Calling git hostname failed with error code " << result << endl;
+}
+
+void call_git_uname()
+{
+	auto result = system("\"c:\\Program Files\\Git\\usr\\bin\\uname.exe\"");
+	if (result == 0)
+		cout << "Calling git uname succeeded." << endl;
+	else
+		cout << "Calling git uname failed with error code " << result << endl;
+}
+
 int main()
 {
 	cout << "Testing GetComputerNameEx()" << endl;
@@ -91,6 +109,12 @@ int main()
 
 	cout << "Testing cygwin_gethostname()" << endl;
 	call_cygwin_gethostname();
+
+	cout << "Testing git hostname" << endl;
+	call_git_hostname();
+
+	cout << "Testing git uname" << endl;
+	call_git_uname();
 	
 	return 0;
 }
